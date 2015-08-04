@@ -15,7 +15,6 @@ var entityMap = {
         '/': '&#x2F;'
     }
 };
-
 //匹配的三种模式
 _.templateSettings = {
     evaluate: /<%([\s\S]+?)%>/g,
@@ -30,6 +29,8 @@ _.templateSettings = {
 *如 "abccccccccdefg".match(/abc+?/)   -- ["ab"]
 */
 
+
+/************以下是使用的工具函数 start **************/
 var nativeKeys = Object.keys;  //返回该对象的所有可枚举自身属性的属性名组成的字符串数组["",""]
 _.keys = nativeKeys || function(obj) { //keys方法实现
     if (obj !== Object(obj)) throw new TypeError('Invalid object');
@@ -53,7 +54,6 @@ _.each(['escape', 'unescape'], function(method) {
         });
     };
 });
-
 //即生成的_.escape为(这个不是源码的)
 _.escape = function(string){
     if(string == null) return '';
@@ -74,7 +74,9 @@ var escapes = {
 };
 var escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
 
-//template代码
+/*********
+ *template代码
+************/
 _.template = function(text, data, settings) {
     var render;
     settings = _.defaults({}, settings, _.templateSettings);
@@ -140,9 +142,8 @@ _.template = function(text, data, settings) {
     return template;  // 没有传递data数据，则先调用template生成render，然后在传递data生成html
 };
 
-
-
-//解析过程(以下面这个模板为例)
+//**************解析过程(以下面这个模板为例)******************
+//**************解析过程(以下面这个模板为例)******************
 <ul id="type_id">
     <% for (var i = 0, len = data.length; i < len; i++) { %>
     <li class="type js_type">
@@ -158,14 +159,15 @@ _.template = function(text, data, settings) {
     <% } %>
 </ul>
 
-步骤1. <% for (var i = 0, len = data.length; i < len; i++) { %>
+
+//**************步骤1. <% for (var i = 0, len = data.length; i < len; i++) { %>******************
 source = 
 "__p+='<ul id="type_id">\n    ';
  for (var i = 0, len = data.length; i < len; i++) { 
 __p+='"
 
-步骤2. <%=data[i].name%>
 
+//**************步骤2. <%=data[i].name%>******************
 source=
 "__p+='<ul id="type_id">\n    ';
  for (var i = 0, len = data.length; i < len; i++) { 
@@ -173,7 +175,7 @@ __p+='\n    <li class="type js_type">\n        <h2>'+
 ((__t=(data[i].name))==null?'':__t)+
 '"
 
-步骤3. 模板解析完后
+//**************步骤3. 模板解析完后******************
 source= 
 "__p+='<ul id="type_id">\n    ';
  for (var i = 0, len = data.length; i < len; i++) { 
@@ -190,7 +192,7 @@ __p+='\n        </ul>\n    </li>\n    ';
 __p+='\n</ul>';
 "
 
-步骤4. 追加with，生成作用于，也可以不适用with，with有性能问题
+//**************步骤4. 追加with，生成作用域，也可以不适用with，with有性能问题******************
 "with(obj||{}){
 __p+='<ul id="type_id">\n    ';
  for (var i = 0, len = data.length; i < len; i++) { 
@@ -207,7 +209,8 @@ __p+='\n        </ul>\n    </li>\n    ';
 __p+='\n</ul>';
 }
 "
-5. 组装source，追加_t,_p等变量定义
+
+//**************步骤5. 组装source，追加_t,_p等变量定义******************
 "var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 with(obj||{}){
 __p+='<ul id="type_id">\n    ';
@@ -226,10 +229,11 @@ __p+='\n</ul>';
 }
 return __p;
 "
-6. new Function 来生成一个匿名函数给render
+
+//**************步骤6. new Function 来生成一个匿名函数给render******************
 render = new Function(settings.variable || 'obj', '_', source); //最后一个是函数内容，之前的为参数
 
-render：obj即调用render的时候传递的data参数
+render：obj为调用render的时候传递的data参数
 function (obj, _) {
     var __t, __p = '',
         __j = Array.prototype.join,
